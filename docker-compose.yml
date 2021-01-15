@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  ipfs:
+    build:
+        context: ./
+        dockerfile: alpine.Dockerfile
+    image: ipfs/ipfs
+    restart: always
+    environment:
+      - IPFS_LOGGING=info
+    ports:
+      # Swarm TCP; should be exposed to the public
+      - "4001:4001"
+      # Swarm UDP; should be exposed to the public
+      - "4001:4001/udp"
+      # Daemon API; must not be exposed publicly but to client services under you control
+      - "5001:5001"
+      # Web Gateway; can be exposed publicly with a proxy, e.g. as https://ipfs.example.org
+      - "8080:8080"
+      # Swarm Websockets; must be exposed publicly when the node is listening using the websocket transport (/ipX/.../tcp/8081/ws).
+      - "8081:8081"
+    volumes:
+      - $HOME/workspace/dhnt/oci:/oci
+    #   - $HOME/var/ipfs/export:/export
+    #   - $HOME/var/ipfs/data:/data/ipfs
+    #   # - $HOME/.dhnt/oci/ipfs/export:/export
+    #   # - $HOME/.dhnt/oci/ipfs:/data/ipfs
